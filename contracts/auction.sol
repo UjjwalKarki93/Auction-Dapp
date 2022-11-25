@@ -53,6 +53,7 @@ function endAuction() internal {
 function placeBid()public payable{
     require(ProductInstance.isClosed == false,"the auction is closed");
     require(msg.value > 0 && msg.value >= ProductInstance.basePrice,"amount cant be zero");
+    require(msg.value > ProductInstance.highestBid,"less than the bid amount");
     emit bidPlacers(msg.sender,msg.value);
     uint AmountAfterCharge = msg.value - ProductInstance.charge;
     if( msg.value > ProductInstance.highestBid) {

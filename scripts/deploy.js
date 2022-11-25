@@ -3,7 +3,7 @@ async function main() {
   const description = "apple";
   //in wei
   const charge = 100000;
-  const endTimeInMinutes = 5;
+  const endTimeInMinutes = 60;
 
   const auctionContract = await ethers.getContractFactory("auction");
   const deployedContract = await auctionContract.deploy(

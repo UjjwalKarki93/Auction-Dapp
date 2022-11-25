@@ -3,10 +3,15 @@ import "./App.css";
 import { useEffect, useState, createContext } from "react";
 import { ethers, Contract, utils } from "ethers";
 import { ABI, deployedAddress } from "./constants";
+import { Button, box } from "@mui/material";
+import AuctionDetails from "./components/AuctionDetails";
 
 function App() {
   const { ethereum } = window;
-  const [aucDatas, setA] = useState();
+  const [isRead, setR] = useState(false);
+  const [isBid, setB] = useState(false);
+  const [aucDatas, setA] = useState(null);
+  const [amount, setAmount] = useState(0);
   const [critialData, setData] = useState({
     account: null,
     chainId: null,
@@ -22,7 +27,7 @@ function App() {
           method: "eth_requestAccounts",
         });
         const _chainId = await ethereum.request({ method: "eth_chainId" });
-        if (parseInt(_chainId, 16) !== 5777) {
+        if (parseInt(_chainId, 16) !== 1337) {
           alert("Connect to ganache ");
         }
         const _isConnected = ethereum.isConnected();
@@ -33,7 +38,6 @@ function App() {
           chainId: parseInt(_chainId, 16),
           isConnected: _isConnected,
         });
-        readAuctionDetails();
       } else if (window.web3) {
         alert("update your metamask");
       } else {
@@ -57,46 +61,88 @@ function App() {
     try {
       const auctionContract = await getProviderorSigner();
       const datas = await auctionContract.readAuction();
+      console.log(datas);
       setA(datas);
+      setR(!isRead);
     } catch (e) {
       console.error(e);
     }
   };
 
+  const renderButton = () => {
+    if (aucDatas !== null) return <AuctionDetails datas={aucDatas} />;
+  };
+
+  const placeBid = async () => {
+    try {
+      const auctionContract = await getProviderorSigner(true);
+      await auctionContract.placeBid({
+        value: utils.parseEther(amount.toString()),
+      });
+      readAuctionDetails();
+      setB(!isBid);
+    } catch (e) {
+      alert("Bid amount is less than the recent highest bid !");
+    }
+  };
+
+  const renderBidders = async () => {
+    const auctionContract = await getProviderorSigner();
+    const bids = await auctionContract.queryFilter("bidPlacers");
+
+    if (isBid)
+      return bids.map(async (bid) => {
+        <p>{bid.args.bidders}</p>;
+      });
+  };
+
   useEffect(() => {
     ethereum.on("accountsChanged", (accounts) => {
       setData({ ...critialData, account: accounts[0] });
+      window.location.reload();
     });
 
     ethereum.on("chainChanged", (_chainId) =>
       setData({ ...critialData, chainId: parseInt(_chainId, 16) })
     );
+
+    readAuctionDetails();
   }, [critialData.isConnected, critialData.account, critialData.chainId]);
 
   return (
     <div>
+      {console.log("isBid", isBid)}
       {critialData.isConnected ? (
-        <div>
+        <>
           {`ADDRESS: ${critialData.account}`}
           <br />
           {`Chain ID: ${critialData.chainId}`}
-          <div>
-            {aucDatas.map((e, index) => (
-              <ol key={index}>
-                {/* <li>{utils.formatEther(e[0])}</li> */}
-                <li>{e[1]}</li>
-                <li>{e[2]}</li>
-                {/* <li>{utils.formatEther("e[3]")}</li> */}
-                <li>{e[4]}</li>
-                <li>{e[5]}</li>
-              </ol>
-            ))}
-          </div>
-        </div>
+          <br />
+          <br />
+          <br />
+          {renderButton()}
+          <br />
+          <br />
+          <h1>Bidding Section:</h1>
+          <label>Enter Amount:</label>
+
+          <input
+            type="number"
+            placeHolder="Eth"
+            onChange={(e) => {
+              setAmount(e.target.value);
+            }}
+          ></input>
+          <br />
+          <Button variant="contained" onClick={placeBid}>
+            Place
+          </Button>
+          <h1>Bidder Logs:</h1>
+        </>
       ) : (
-        <div>
-          <button onClick={connectWallet}>Connect Wallet</button>
-        </div>
+        <Button variant="contained" onClick={connectWallet}>
+          Connect Wallet
+        </Button>
       )}
     </div>
   );
