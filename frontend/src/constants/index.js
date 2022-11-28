@@ -16,11 +16,6 @@ const ABI = [
         name: "_charge",
         type: "uint256",
       },
-      {
-        internalType: "uint256",
-        name: "_auctionTime",
-        type: "uint256",
-      },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -56,7 +51,19 @@ const ABI = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "amount",
+        name: "prevBid",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "incrementAmount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "recBid",
         type: "uint256",
       },
     ],
@@ -87,6 +94,52 @@ const ABI = [
     ],
     name: "newAuction",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "bidders",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "claimProduct",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "endAuction",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
@@ -142,6 +195,11 @@ const ABI = [
         name: "",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
     stateMutability: "view",
     type: "function",
@@ -165,5 +223,5 @@ const ABI = [
     type: "function",
   },
 ];
-const deployedAddress = "0x48323EBbc92fdd5c949011Db4354789922841D78";
+const deployedAddress = "0x8E1C4e7F54a8CAA813f236Db49Cd26090Eaf9EFf";
 module.exports = { ABI, deployedAddress };

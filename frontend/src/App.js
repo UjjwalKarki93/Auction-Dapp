@@ -1,23 +1,32 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState, createContext } from "react";
-import { ethers, Contract, utils } from "ethers";
+import { ethers, Contract, utils, BigNumber } from "ethers";
 import { ABI, deployedAddress } from "./constants";
 import { Button, box } from "@mui/material";
+import { Form } from "semantic-ui-react";
 import AuctionDetails from "./components/AuctionDetails";
+import BidLogs from "./components/BidLogs";
 
 function App() {
   const { ethereum } = window;
+  const [isEnd, setEnd] = useState(false);
   const [isRead, setR] = useState(false);
-  const [isBid, setB] = useState(false);
+  const [reAucData, setRe] = useState({
+    charge: 0,
+    basePrice: 0,
+  });
+  const [logDataBidders, setLogDataBidders] = useState(null);
   const [aucDatas, setA] = useState(null);
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
   const [critialData, setData] = useState({
     account: null,
     chainId: null,
     provider: null,
     isConnected: false,
   });
+
+  const [tamount, setT] = useState(0);
 
   const connectWallet = async () => {
     try {
@@ -29,6 +38,7 @@ function App() {
         const _chainId = await ethereum.request({ method: "eth_chainId" });
         if (parseInt(_chainId, 16) !== 1337) {
           alert("Connect to ganache ");
+          window.location.reload();
         }
         const _isConnected = ethereum.isConnected();
         setData({
@@ -69,7 +79,7 @@ function App() {
     }
   };
 
-  const renderButton = () => {
+  const renderAuction = () => {
     if (aucDatas !== null) return <AuctionDetails datas={aucDatas} />;
   };
 
@@ -77,10 +87,9 @@ function App() {
     try {
       const auctionContract = await getProviderorSigner(true);
       await auctionContract.placeBid({
-        value: utils.parseEther(amount.toString()),
+        value: utils.parseUnits(amount),
       });
-      readAuctionDetails();
-      setB(!isBid);
+      setLogDataBidders(null);
     } catch (e) {
       alert("Bid amount is less than the recent highest bid !");
     }
@@ -88,30 +97,66 @@ function App() {
 
   const renderBidders = async () => {
     const auctionContract = await getProviderorSigner();
-    const bids = await auctionContract.queryFilter("bidPlacers");
+    const getAllBids = auctionContract.filters.bidPlacers();
+    const bids = await auctionContract.queryFilter(getAllBids);
+    console.log("inside renderbidders");
+    setLogDataBidders(bids);
+  };
 
-    if (isBid)
-      return bids.map(async (bid) => {
-        <p>{bid.args.bidders}</p>;
-      });
+  const reAuction = async () => {
+    try {
+      const auctionContract = await getProviderorSigner(true);
+      await auctionContract.startAuction(
+        utils.parseEther(reAucData.basePrice.toString()),
+        reAucData.charge
+      );
+      setEnd(false);
+    } catch (e) {
+      alert("Check the ownership or closing status of auction!");
+    }
+  };
+
+  const endYourAuction = async () => {
+    try {
+      const auctionContract = await getProviderorSigner(true);
+      await auctionContract.endAuction();
+
+      setEnd(true);
+    } catch (e) {
+      alert("cant end");
+    }
+  };
+
+  const claimYourProduct = async () => {
+    try {
+      const auctionContract = getProviderorSigner(true);
+      await auctionContract.claimProduct({ value: utils.parseEther(tamount) });
+    } catch (e) {}
   };
 
   useEffect(() => {
     ethereum.on("accountsChanged", (accounts) => {
       setData({ ...critialData, account: accounts[0] });
-      window.location.reload();
     });
 
-    ethereum.on("chainChanged", (_chainId) =>
-      setData({ ...critialData, chainId: parseInt(_chainId, 16) })
-    );
-
+    ethereum.on("chainChanged", (_chainId) => {
+      setData({ ...critialData, chainId: parseInt(_chainId, 16) });
+      window.location.reload();
+    });
+    if (logDataBidders !== null && aucDatas !== null) {
+      renderBidders();
+    }
     readAuctionDetails();
-  }, [critialData.isConnected, critialData.account, critialData.chainId]);
+  }, [
+    critialData.isConnected,
+    critialData.account,
+    critialData.chainId,
+    isRead,
+  ]);
 
   return (
     <div>
-      {console.log("isBid", isBid)}
+      {console.log("render")}
       {critialData.isConnected ? (
         <>
           {`ADDRESS: ${critialData.account}`}
@@ -120,7 +165,28 @@ function App() {
           <br />
           <br />
           <br />
-          {renderButton()}
+          <h1>Owner Section:</h1>
+          {isEnd ? (
+            <>
+              <label>Enter Amount:</label>
+              <input
+                type="number"
+                placeHolder="Transfer"
+                onChange={(e) => {
+                  setT(e.target.value);
+                }}
+              ></input>
+              <br />
+              <Button variant="contained">Claim Product</Button>
+            </>
+          ) : (
+            <Button variant="contained" onClick={endYourAuction}>
+              End Auction
+            </Button>
+          )}
+
+          {renderAuction()}
+
           <br />
           <br />
           <h1>Bidding Section:</h1>
@@ -135,9 +201,43 @@ function App() {
           ></input>
           <br />
           <Button variant="contained" onClick={placeBid}>
-            Place
+            Increment Bid
           </Button>
           <h1>Bidder Logs:</h1>
+          {logDataBidders == null ? (
+            <Button variant="contained" onClick={renderBidders}>
+              Get Logs
+            </Button>
+          ) : (
+            <BidLogs bidders={logDataBidders} />
+          )}
+          <br />
+          <h1>Re-auction:</h1>
+          <Form>
+            <Form.Field>
+              <label>Base Price:</label>
+              <input
+                placeholder="ETH"
+                type="number"
+                onChange={(e) => {
+                  setRe({ ...reAucData, basePrice: e.target.value });
+                }}
+              />
+            </Form.Field>
+            <Form.Field>
+              <label>Charge Amount:</label>
+              <input
+                placeholder="Wei"
+                type="number"
+                onChange={(e) => {
+                  setRe({ ...reAucData, charge: e.target.value });
+                }}
+              />
+            </Form.Field>
+            <Button variant="contained" type="submit" onClick={reAuction}>
+              Submit
+            </Button>
+          </Form>
         </>
       ) : (
         <Button variant="contained" onClick={connectWallet}>

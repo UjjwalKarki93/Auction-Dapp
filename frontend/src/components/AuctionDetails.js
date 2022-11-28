@@ -12,6 +12,7 @@ const AuctionDetails = (props) => {
           <Table.Row>
             <Table.HeaderCell>Base Price</Table.HeaderCell>
             <Table.HeaderCell>Description</Table.HeaderCell>
+            <Table.HeaderCell>Charge(ETH)</Table.HeaderCell>
             <Table.HeaderCell>Highest Bidder</Table.HeaderCell>
             <Table.HeaderCell>Highest Bid</Table.HeaderCell>
             <Table.HeaderCell>Closed</Table.HeaderCell>
@@ -23,6 +24,7 @@ const AuctionDetails = (props) => {
           <Table.Row>
             <Table.Cell>{utils.formatEther(data[0])}</Table.Cell>
             <Table.Cell>{data[1]}</Table.Cell>
+            <Table.Cell>{utils.formatEther(data[6])}</Table.Cell>
             <Table.Cell>{data[2]}</Table.Cell>
             <Table.Cell>{utils.formatEther(data[3])}</Table.Cell>
             <Table.Cell>{data[4].toString()}</Table.Cell>
