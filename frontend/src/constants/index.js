@@ -71,6 +71,20 @@ const ABI = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "claimProduct",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "endAuction",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -96,6 +110,31 @@ const ABI = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "placeBid",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_charge",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_basePrice",
+        type: "uint256",
+      },
+    ],
+    name: "startAuction",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -112,20 +151,6 @@ const ABI = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "claimProduct",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "endAuction",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -152,13 +177,6 @@ const ABI = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "placeBid",
-    outputs: [],
-    stateMutability: "payable",
     type: "function",
   },
   {
@@ -195,31 +213,8 @@ const ABI = [
         name: "",
         type: "address",
       },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_charge",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_basePrice",
-        type: "uint256",
-      },
-    ],
-    name: "startAuction",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
 ];
