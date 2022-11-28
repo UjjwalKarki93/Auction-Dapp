@@ -71,20 +71,6 @@ const ABI = [
     type: "event",
   },
   {
-    inputs: [],
-    name: "claimProduct",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "endAuction",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     anonymous: false,
     inputs: [
       {
@@ -111,59 +97,29 @@ const ABI = [
   },
   {
     inputs: [],
-    name: "placeBid",
+    name: "claimProduct",
     outputs: [],
     stateMutability: "payable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_charge",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_basePrice",
-        type: "uint256",
-      },
-    ],
-    name: "startAuction",
+    inputs: [],
+    name: "endAuction",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "bidders",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
-    name: "getOwner",
+    name: "getAuctionStatus",
     outputs: [
       {
-        internalType: "address",
+        internalType: "bool",
         name: "",
-        type: "address",
+        type: "bool",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -174,6 +130,26 @@ const ABI = [
         internalType: "address payable",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "placeBid",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "reAuction",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -213,10 +189,33 @@ const ABI = [
         name: "",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_charge",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_basePrice",
+        type: "uint256",
+      },
+    ],
+    name: "startAuction",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
-const deployedAddress = "";
+const deployedAddress = "0x3427F6D7aC39Fd28ECc903219F2111cbD5a4A8Af";
 module.exports = { ABI, deployedAddress };

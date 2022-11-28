@@ -5,6 +5,7 @@ pragma solidity ^0.8.11;
 contract auction {
 
     address payable public owner;
+    bool public reAuction;
     struct product{
         
         uint basePrice;
@@ -17,7 +18,6 @@ contract auction {
     }
     mapping(address => uint) trackBids;
         mapping(address => uint) trackIncrement;
-        address[] public bidders;
 
 product ProductInstance;
 
@@ -44,8 +44,10 @@ modifier onlyOwner{
 
 function endAuction() public onlyOwner{
        ProductInstance.isClosed = true;
+       reAuction = true;
        //only transfers charges collected inside contract to the owner
         owner.transfer(address(this).balance);
+
 }
 function claimProduct() public payable {
    
@@ -75,12 +77,6 @@ function placeBid()public payable{
         ProductInstance.highestBidder = msg.sender;
         ProductInstance.highestBid = trackIncrement[msg.sender];
         payable(msg.sender).transfer(AmountAfterCharge);
-        
-
-        
-       
-    
-
     }
    
 
@@ -91,18 +87,23 @@ function readAuction() public view  returns(uint,string memory,address,uint,bool
 return(ProductInstance.basePrice,ProductInstance.description,ProductInstance.highestBidder,ProductInstance.highestBid,ProductInstance.isClosed,owner);
 }
 
-function getOwner() public view returns(address){
-    return owner;
-}
+
 
 //new owner can start the auction again
 //@param _charge and _basePrice ,the new value to be set by the new owner.
 //@dev new owner can start Auction again
 function startAuction(uint _charge,uint _basePrice)public onlyOwner{
     require(ProductInstance.isClosed,"auction can't be started");
+    require(reAuction==true,"auction can't be started");
     ProductInstance.isClosed == false;
     ProductInstance.charge == _charge;
     ProductInstance.basePrice == _basePrice;
+    reAuction = false;
+
+}
+
+function getAuctionStatus()public returns(bool){
+    return reAuction;
 }
 
 

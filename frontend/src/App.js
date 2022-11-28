@@ -10,7 +10,8 @@ import BidLogs from "./components/BidLogs";
 
 function App() {
   const { ethereum } = window;
-  const [isEnd, setEnd] = useState(false);
+
+  const [isEnd, setEnd] = useState();
   const [isRead, setR] = useState(false);
   const [reAucData, setRe] = useState({
     charge: 0,
@@ -107,9 +108,12 @@ function App() {
     try {
       const auctionContract = await getProviderorSigner(true);
       await auctionContract.startAuction(
-        utils.parseEther(reAucData.basePrice.toString()),
-        reAucData.charge
+        utils.parseEther(reAucData.charge, reAucData.basePrice.toString())
       );
+      const auctionContractP = await getProviderorSigner();
+      const datas = await auctionContractP.readAuction();
+      setA(datas);
+
       setEnd(false);
     } catch (e) {
       alert("Check the ownership or closing status of auction!");
@@ -120,8 +124,8 @@ function App() {
     try {
       const auctionContract = await getProviderorSigner(true);
       await auctionContract.endAuction();
-
-      setEnd(true);
+      const status = await auctionContract.getAuctionStatus();
+      setEnd(status);
     } catch (e) {
       alert("cant end");
     }
@@ -129,9 +133,15 @@ function App() {
 
   const claimYourProduct = async () => {
     try {
-      const auctionContract = getProviderorSigner(true);
-      await auctionContract.claimProduct({ value: utils.parseEther(tamount) });
-    } catch (e) {}
+      console.log(tamount);
+      const auctionContract = await getProviderorSigner(true);
+      await auctionContract.claimProduct({
+        value: utils.parseUnits(tamount),
+      });
+    } catch (e) {
+      console.error(e);
+      alert("you are not the highest bidder!");
+    }
   };
 
   useEffect(() => {
@@ -147,28 +157,22 @@ function App() {
       renderBidders();
     }
     readAuctionDetails();
-  }, [
-    critialData.isConnected,
-    critialData.account,
-    critialData.chainId,
-    isRead,
-  ]);
+  }, [critialData.isConnected, critialData.account, critialData.chainId]);
 
   return (
-    <div>
-      {console.log("render")}
+    <div className="App">
       {critialData.isConnected ? (
         <>
-          {`ADDRESS: ${critialData.account}`}
+          <div className="details">
+            {`ADDRESS: ${critialData.account}`}
+            <br />
+            {`Chain ID: ${critialData.chainId}`}
+          </div>
           <br />
-          {`Chain ID: ${critialData.chainId}`}
-          <br />
-          <br />
-          <br />
-          <h1>Owner Section:</h1>
+          <h1>Owner Section</h1>
           {isEnd ? (
             <>
-              <label>Enter Amount:</label>
+              <label>Enter Amount</label> &nbsp;
               <input
                 type="number"
                 placeHolder="Transfer"
@@ -177,21 +181,23 @@ function App() {
                 }}
               ></input>
               <br />
-              <Button variant="contained">Claim Product</Button>
+              <br />
+              <Button variant="contained" onClick={claimYourProduct}>
+                Claim Product
+              </Button>
             </>
           ) : (
             <Button variant="contained" onClick={endYourAuction}>
               End Auction
             </Button>
           )}
-
+          <br />
+          <br />
           {renderAuction()}
-
           <br />
           <br />
-          <h1>Bidding Section:</h1>
-          <label>Enter Amount:</label>
-
+          <h1>Bidding Section </h1>
+          <label>Enter Amount </label> &nbsp;
           <input
             type="number"
             placeHolder="Eth"
@@ -199,11 +205,11 @@ function App() {
               setAmount(e.target.value);
             }}
           ></input>
-          <br />
+          <br /> <br />
           <Button variant="contained" onClick={placeBid}>
             Increment Bid
           </Button>
-          <h1>Bidder Logs:</h1>
+          <h1>Bidder Logs </h1>
           {logDataBidders == null ? (
             <Button variant="contained" onClick={renderBidders}>
               Get Logs
@@ -212,10 +218,10 @@ function App() {
             <BidLogs bidders={logDataBidders} />
           )}
           <br />
-          <h1>Re-auction:</h1>
-          <Form>
-            <Form.Field>
-              <label>Base Price:</label>
+          <h1>Re-auction</h1>
+          <Form className="ui form ">
+            <Form.Field className="six wide field">
+              <label>Base Price</label>
               <input
                 placeholder="ETH"
                 type="number"
@@ -224,8 +230,8 @@ function App() {
                 }}
               />
             </Form.Field>
-            <Form.Field>
-              <label>Charge Amount:</label>
+            <Form.Field className="six wide field">
+              <label>Charge Amount</label>
               <input
                 placeholder="Wei"
                 type="number"
@@ -240,9 +246,12 @@ function App() {
           </Form>
         </>
       ) : (
-        <Button variant="contained" onClick={connectWallet}>
-          Connect Wallet
-        </Button>
+        <div className="connectButton">
+          <pre>PLEASE CONNECT YOUR WALLET TO GET ACCESS</pre>
+          <Button variant="contained" onClick={connectWallet}>
+            Connect Wallet
+          </Button>
+        </div>
       )}
     </div>
   );

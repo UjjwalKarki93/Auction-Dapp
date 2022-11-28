@@ -6,7 +6,8 @@ const AuctionDetails = (props) => {
   let data = props.datas;
   return (
     <div>
-      <h1>Auction Details:</h1>
+      {console.log(data)}
+      <h1>Auction Details</h1>
       <Table compact celled definition>
         <Table.Header>
           <Table.Row>
