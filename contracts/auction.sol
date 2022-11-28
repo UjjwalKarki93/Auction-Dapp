@@ -52,6 +52,10 @@ function claimProduct() public payable {
     require(ProductInstance.isClosed ,"owner hasnot ended auction");
      require(ProductInstance.highestBidder == msg.sender,"you are not he highest bidder");
     require(ProductInstance.highestBid > 0,"bid is not done on the product");
+    require(ProductInstance.highestBid == msg.value,"amount must be equal to bid amount");
+    //transfer amout to the previous owner to claim 
+     owner.transfer(address(this).balance);
+     //update the newOwner
     owner = payable(ProductInstance.highestBidder);  
     emit auctionEnded(owner,ProductInstance.highestBid);
 }
@@ -83,8 +87,8 @@ function placeBid()public payable{
 
 
 
-function readAuction() public view  returns(uint,string memory,address,uint,bool,address,uint){
-return(ProductInstance.basePrice,ProductInstance.description,ProductInstance.highestBidder,ProductInstance.highestBid,ProductInstance.isClosed,owner,ProductInstance.charge);
+function readAuction() public view  returns(uint,string memory,address,uint,bool,address){
+return(ProductInstance.basePrice,ProductInstance.description,ProductInstance.highestBidder,ProductInstance.highestBid,ProductInstance.isClosed,owner);
 }
 
 function getOwner() public view returns(address){
