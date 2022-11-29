@@ -111,19 +111,6 @@ const ABI = [
   },
   {
     inputs: [],
-    name: "getAuctionStatus",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "owner",
     outputs: [
       {
@@ -217,5 +204,5 @@ const ABI = [
     type: "function",
   },
 ];
-const deployedAddress = "0x3427F6D7aC39Fd28ECc903219F2111cbD5a4A8Af";
+const deployedAddress = "0x435eF96a94473aCdAAB02Ef14FAe675072Ad51BE";
 module.exports = { ABI, deployedAddress };
