@@ -204,5 +204,5 @@ const ABI = [
     type: "function",
   },
 ];
-const deployedAddress = "0x435eF96a94473aCdAAB02Ef14FAe675072Ad51BE";
+const deployedAddress = "//write deployed address";
 module.exports = { ABI, deployedAddress };
