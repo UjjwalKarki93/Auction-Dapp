@@ -83,8 +83,8 @@ function placeBid()public payable{
 
 
 
-function readAuction() public view  returns(uint,string memory,address,uint,bool,address){
-return(ProductInstance.basePrice,ProductInstance.description,ProductInstance.highestBidder,ProductInstance.highestBid,ProductInstance.isClosed,owner);
+function readAuction() public view  returns(uint,string memory,address,uint,bool,address,uint){
+return(ProductInstance.basePrice,ProductInstance.description,ProductInstance.highestBidder,ProductInstance.highestBid,ProductInstance.isClosed,owner,ProductInstance.charge);
 }
 
 
@@ -95,16 +95,16 @@ return(ProductInstance.basePrice,ProductInstance.description,ProductInstance.hig
 function startAuction(uint _charge,uint _basePrice)public onlyOwner{
     require(ProductInstance.isClosed,"auction can't be started");
     require(reAuction==true,"auction can't be started");
-    ProductInstance.isClosed == false;
-    ProductInstance.charge == _charge;
-    ProductInstance.basePrice == _basePrice;
+    ProductInstance.isClosed = false;
+    ProductInstance.charge = _charge;
+    ProductInstance.highestBidder = address(0);
+    ProductInstance.highestBid = 0;
+    ProductInstance.basePrice = _basePrice;
     reAuction = false;
 
 }
 
-function getAuctionStatus()public returns(bool){
-    return reAuction;
-}
+
 
 
 }

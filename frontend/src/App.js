@@ -14,8 +14,8 @@ function App() {
   const [isEnd, setEnd] = useState();
   const [isRead, setR] = useState(false);
   const [reAucData, setRe] = useState({
-    charge: 0,
-    basePrice: 0,
+    charge: "",
+    basePrice: "",
   });
   const [logDataBidders, setLogDataBidders] = useState(null);
   const [aucDatas, setA] = useState(null);
@@ -107,13 +107,16 @@ function App() {
   const reAuction = async () => {
     try {
       const auctionContract = await getProviderorSigner(true);
+      console.log(reAucData);
       await auctionContract.startAuction(
         reAucData.charge,
         utils.parseEther(reAucData.basePrice.toString())
       );
 
       setEnd(false);
+      setR(!isRead);
     } catch (e) {
+      console.error(e);
       alert("Check the ownership or closing status of auction!");
     }
   };
@@ -252,7 +255,7 @@ function App() {
         </>
       ) : (
         <div className="connectButton">
-          <pre>PLEASE CONNECT YOUR WALLET TO GET ACCESS</pre>
+          <pre>PLEASE CONNECT YOUR WALLET TO GET ACCES..........</pre>
           <Button variant="contained" onClick={connectWallet}>
             Connect Wallet
           </Button>
