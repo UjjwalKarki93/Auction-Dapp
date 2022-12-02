@@ -1,5 +1,5 @@
 async function main() {
-  const basePrice = ethers.utils.parseEther("1");
+  const basePrice = ethers.utils.parseEther("0.0001");
   const description = "apple";
   //in wei
   const charge = 100000;

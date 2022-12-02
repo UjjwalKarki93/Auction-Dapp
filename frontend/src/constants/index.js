@@ -217,5 +217,5 @@ const ABI = [
     type: "function",
   },
 ];
-const deployedAddress = "0xde8fd63A34b275d72138F87381a48543710437b3";
+const deployedAddress = "0xa30f40D93cbefbF7387a730FBB04B12F11E1EcDf";
 module.exports = { ABI, deployedAddress };
