@@ -37,8 +37,8 @@ function App() {
           method: "eth_requestAccounts",
         });
         const _chainId = await ethereum.request({ method: "eth_chainId" });
-        if (parseInt(_chainId, 16) !== 1337) {
-          alert("Connect to ganache ");
+        if (parseInt(_chainId, 16) !== 5) {
+          alert("Connect to goerli network to get access: ");
           window.location.reload();
         }
         const _isConnected = ethereum.isConnected();
@@ -108,11 +108,9 @@ function App() {
     try {
       const auctionContract = await getProviderorSigner(true);
       await auctionContract.startAuction(
-        utils.parseEther(reAucData.charge, reAucData.basePrice.toString())
+        reAucData.charge,
+        utils.parseEther(reAucData.basePrice.toString())
       );
-      const auctionContractP = await getProviderorSigner();
-      const datas = await auctionContractP.readAuction();
-      setA(datas);
 
       setEnd(false);
     } catch (e) {
@@ -124,8 +122,6 @@ function App() {
     try {
       const auctionContract = await getProviderorSigner(true);
       await auctionContract.endAuction();
-      const status = await auctionContract.getAuctionStatus();
-      setEnd(status);
     } catch (e) {
       alert("cant end");
     }
@@ -157,7 +153,12 @@ function App() {
       renderBidders();
     }
     readAuctionDetails();
-  }, [critialData.isConnected, critialData.account, critialData.chainId]);
+  }, [
+    critialData.isConnected,
+    critialData.account,
+    critialData.chainId,
+    isRead,
+  ]);
 
   return (
     <div className="App">
@@ -176,6 +177,7 @@ function App() {
               <input
                 type="number"
                 placeHolder="Transfer"
+                step="any"
                 onChange={(e) => {
                   setT(e.target.value);
                 }}
@@ -200,6 +202,7 @@ function App() {
           <label>Enter Amount </label> &nbsp;
           <input
             type="number"
+            step="any"
             placeHolder="Eth"
             onChange={(e) => {
               setAmount(e.target.value);
@@ -225,6 +228,7 @@ function App() {
               <input
                 placeholder="ETH"
                 type="number"
+                step="any"
                 onChange={(e) => {
                   setRe({ ...reAucData, basePrice: e.target.value });
                 }}
@@ -235,6 +239,7 @@ function App() {
               <input
                 placeholder="Wei"
                 type="number"
+                step="any"
                 onChange={(e) => {
                   setRe({ ...reAucData, charge: e.target.value });
                 }}

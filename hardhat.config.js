@@ -5,7 +5,7 @@ require("dotenv").config({ path: ".env" });
 module.exports = {
   solidity: "0.8.17",
   networks: {
-    ganache: {
+    goerli: {
       url: process.env.PROVIDER_URL,
       accounts: [process.env.PRIVATE_KEY],
     },

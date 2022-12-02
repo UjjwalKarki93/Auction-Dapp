@@ -1,6 +1,6 @@
 .App {
   padding: 40px;
-  background-color: #667a12;
+  background-color: #e9967a;
   color: white;
 }
 
@@ -56,4 +56,5 @@
   margin-top: 300px;
   margin-left: 620px;
   color: white;
+  font-weight: bolder;
 }
