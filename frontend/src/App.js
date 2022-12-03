@@ -1,9 +1,9 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { useEffect, useState, createContext } from "react";
-import { ethers, Contract, utils, BigNumber } from "ethers";
+import { useEffect, useState } from "react";
+import { ethers, Contract, utils } from "ethers";
 import { ABI, deployedAddress } from "./constants";
-import { Button, box } from "@mui/material";
+import { Button } from "@mui/material";
 import { Form } from "semantic-ui-react";
 import AuctionDetails from "./components/AuctionDetails";
 import BidLogs from "./components/BidLogs";
@@ -68,6 +68,11 @@ function App() {
     return new Contract(deployedAddress, ABI, critialData.provider);
   };
 
+  const getEndStatus = async () => {
+    const auctionContract = await getProviderorSigner();
+    let isEnded = await auctionContract.getAuctionEndStatus();
+    setEnd(isEnded);
+  };
   const readAuctionDetails = async () => {
     try {
       const auctionContract = await getProviderorSigner();
@@ -113,7 +118,6 @@ function App() {
         utils.parseEther(reAucData.basePrice.toString())
       );
 
-      setEnd(false);
       setR(!isRead);
     } catch (e) {
       console.error(e);
@@ -156,6 +160,7 @@ function App() {
       renderBidders();
     }
     readAuctionDetails();
+    getEndStatus();
   }, [
     critialData.isConnected,
     critialData.account,

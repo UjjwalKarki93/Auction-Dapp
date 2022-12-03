@@ -81,7 +81,9 @@ function placeBid()public payable{
    
 
 
-
+function getAuctionEndStatus()public view returns(bool) {
+return ProductInstance.isClosed;
+}
 
 function readAuction() public view  returns(uint,string memory,address,uint,bool,address,uint){
 return(ProductInstance.basePrice,ProductInstance.description,ProductInstance.highestBidder,ProductInstance.highestBid,ProductInstance.isClosed,owner,ProductInstance.charge);
